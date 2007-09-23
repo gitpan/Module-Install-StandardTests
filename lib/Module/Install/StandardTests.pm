@@ -6,7 +6,7 @@ use File::Spec;
 
 use base 'Module::Install::Base';
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 sub use_standard_tests {
     my $self = shift;
@@ -98,11 +98,13 @@ sub write_standard_test_perl_critic {
             'Author test. Set $ENV{TEST_AUTHOR} to a true value to run.'
             unless $ENV{TEST_AUTHOR};
 
+        my %opt;
         my $rc_file = File::Spec->catfile($Bin, 'perlcriticrc');
+        $opt{'-profile'} = $rc_file if -r $rc_file;
 
         if (Perl::Critic->require('1.078') &&
             Test::Perl::Critic->require &&
-            Test::Perl::Critic->import(-profile => $rc_file)) {
+            Test::Perl::Critic->import(%opt)) {
 
             all_critic_ok("lib");
         } else {
@@ -149,22 +151,28 @@ C<write_standard_test_*> methods one after the other.
 =item write_standard_test_compile
 
 Writes the C<t/000_standard__compile.t> file, which uses L<Test::Compile> to
-check that all perl module files compile.
+check that all perl module files compile. If L<Test::Compile> is not
+available, the tests are skipped.
 
 =item write_standard_test_perl_critic
 
 Writes the C<t/000_standard__perl_critic.t> file, which uses
-L<Test::Perl__Critic> to criticise Perl source code for best practices.
+L<Test::Perl::Critic> to criticise Perl source code for best practices. If
+L<Test::Perl::Critic> is not available, the tests are skipped.
+
+If there is a C<t/perlcriticrc> file, it is used as the Perl::Critic
+configuration.
 
 =item write_standard_test_pod
 
 Writes the C<t/000_standard__pod.t> file, which uses L<Test::Pod> to check for
-POD errors in files.
+POD errors in files. If L<Test::Pod> is not available, the tests are skipped.
 
 =item write_standard_test_pod_coverage
 
 Writes the C<t/000_standard__pod_coverage.t> file, which uses
-L<Test::Pod::Coverage> to check for POD coverage in the distribution.
+L<Test::Pod::Coverage> to check for POD coverage in the distribution. If
+L<Test::Pod::Coverage> is not available, the tests are skipped.
 
 =item write_test_file($filename, $code)
 
