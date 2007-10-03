@@ -5,11 +5,13 @@ use warnings;
 use strict;
 use Test::Builder;
 use File::Spec;
+use UNIVERSAL::require;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 
 my $Test = Test::Builder->new;
+
 
 sub import {
     my $self = shift;
@@ -35,16 +37,18 @@ sub pm_file_ok {
         return;
     }
 
-    my $ok = do $file;
+    my $module = $file;
+    $module =~ s!^(blib/)?lib/!!;
+    $module =~ s!/!::!g;
+    $module =~ s/\.pm$//;
+
+    my $ok = 1;
+    $module->use;
+    $ok = 0 if $@;
+
     my $diag = '';
     unless ($ok) {
-        if ($@) {
-            $diag = "couldn't parse $file: $@";
-        } elsif (!defined $ok) {
-            $diag = "couldn't do $file: $!";
-        } else {
-            $diag = "couldn't run $file";
-        }
+        $diag = "couldn't use $module ($file): $@";
     }
 
     $Test->ok($ok, $name);
@@ -59,8 +63,8 @@ sub all_pm_files_ok {
     $Test->plan(tests => scalar @files);
 
     my $ok = 1;
-    foreach my $file (@files) {
-        pm_file_ok($file, $file) or undef $ok;
+    for (@files) {
+        pm_file_ok($_) or undef $ok;
     }
     $ok;
 }
@@ -108,5 +112,5 @@ sub _starting_points {
 
 __END__
 
-#line 245
+#line 254
 

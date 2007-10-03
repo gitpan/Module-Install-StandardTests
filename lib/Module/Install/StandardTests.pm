@@ -6,16 +6,25 @@ use File::Spec;
 
 use base 'Module::Install::Base';
 
-our $VERSION = '0.02';
+
+our $VERSION = '0.03';
+
 
 sub use_standard_tests {
-    my $self = shift;
+    my ($self, %specs) = @_;
+    
+    my %with = map { $_ => 1 } qw/compile pod pod_coverage perl_critic/;
+    if (exists $specs{without}) {
+        $specs{without} = [ $specs{without} ] unless ref $specs{without};
+        delete $with{$_} for @{ $specs{without} };
+    }
+
     $self->build_requires('Test::More');
     $self->build_requires('UNIVERSAL::require');
-    $self->write_standard_test_compile;
-    $self->write_standard_test_pod;
-    $self->write_standard_test_pod_coverage;
-    $self->write_standard_test_perl_critic;
+    $self->write_standard_test_compile      if $with{compile};
+    $self->write_standard_test_pod          if $with{pod};
+    $self->write_standard_test_pod_coverage if $with{pod_coverage};
+    $self->write_standard_test_perl_critic  if $with{perl_critic};
 }
 
 
@@ -55,10 +64,13 @@ TEST
 sub write_standard_test_compile {
     my $self = shift;
     $self->write_test_file('000_standard__compile.t', q/
-        use Test::More;
-        eval "use Test::Compile";
-        plan skip_all => "Test::Compile required for testing compilation" if $@;
-        all_pm_files_ok();
+        BEGIN {
+            use Test::More;
+            eval "use Test::Compile";
+            plan skip_all =>
+                "Test::Compile required for testing compilation" if $@;
+            all_pm_files_ok();
+        }
     /);
 }
 
@@ -144,9 +156,26 @@ Writes a few standard test files to the test directory C<t/>.
 =item use_standard_tests
 
   use_standard_tests;
+  use_standard_tests(without => 'pod_coverage');
+  use_standard_tests(without => [ qw/pod_coverage perl_critic/ ]);
 
 Adds a few requirements to the build process, then simply calls the
 C<write_standard_test_*> methods one after the other.
+
+If you pass a named argument called C<without>, the the tests corresponding to
+the value (as a string) or values (as an array reference) are omitted. Possible values are:
+
+=over 4
+
+=item compile
+
+=item pod
+
+=item pod_coverage
+
+=item perl_critic
+
+=back
 
 =item write_standard_test_compile
 

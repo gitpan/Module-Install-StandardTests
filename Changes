@@ -1,5 +1,10 @@
 Revision history for Perl extension Module::Install::StandardTests.
 
+0.03  Mi Okt  3 19:00:41 CEST 2007
+    - updated documentation
+    - bumped version numbers to '0.03'
+    - use_standard_tests() now supports 'without' named argument
+
 0.02  So Sep 23 10:01:58 CEST 2007
     - improved the perl critic test so it doesn't die if there is no
       t/perlcriticrc
