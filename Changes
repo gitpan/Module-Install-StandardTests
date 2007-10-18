@@ -1,5 +1,13 @@
 Revision history for Perl extension Module::Install::StandardTests.
 
+0.05  Do Okt 18 10:09:39 CEST 2007
+        - fixed version requirement of Test::More
+
+0.04  Mi Okt  3 22:35:21 CEST 2007
+    - the Test::Compile test is mandatory: Test::Compile is required, and the
+      compile test cannot be turned off using 'without'.
+    - bumped version numbers to '0.04'
+
 0.03  Mi Okt  3 19:00:41 CEST 2007
     - updated documentation
     - bumped version numbers to '0.03'

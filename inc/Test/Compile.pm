@@ -7,7 +7,8 @@ use Test::Builder;
 use File::Spec;
 use UNIVERSAL::require;
 
-our $VERSION = '0.02';
+
+our $VERSION = '0.04';
 
 
 my $Test = Test::Builder->new;
@@ -112,5 +113,5 @@ sub _starting_points {
 
 __END__
 
-#line 254
+#line 261
 

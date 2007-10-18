@@ -7,7 +7,7 @@ use File::Spec;
 use base 'Module::Install::Base';
 
 
-our $VERSION = '0.03';
+our $VERSION = '0.05';
 
 
 sub use_standard_tests {
@@ -21,7 +21,11 @@ sub use_standard_tests {
 
     $self->build_requires('Test::More');
     $self->build_requires('UNIVERSAL::require');
-    $self->write_standard_test_compile      if $with{compile};
+
+    # Unlike other tests, this is mandatory.
+    $self->build_requires('Test::Compile');
+
+    $self->write_standard_test_compile;    # no if; this is mandatory
     $self->write_standard_test_pod          if $with{pod};
     $self->write_standard_test_pod_coverage if $with{pod_coverage};
     $self->write_standard_test_perl_critic  if $with{perl_critic};
@@ -67,8 +71,8 @@ sub write_standard_test_compile {
         BEGIN {
             use Test::More;
             eval "use Test::Compile";
-            plan skip_all =>
-                "Test::Compile required for testing compilation" if $@;
+            Test::More->builder->BAIL_OUT(
+                "Test::Compile required for testing compilation") if $@;
             all_pm_files_ok();
         }
     /);

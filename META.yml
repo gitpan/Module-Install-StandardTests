@@ -3,7 +3,7 @@ abstract: generate standard tests for installation
 author: Marcel GrE<uuml>nauer, C<< <marcel@cpan.org> >>
 build_requires: 
   Test::Compile: 0
-  Test::More: 0
+  Test::More: 0.70
   Test::Pod: 0
   Test::Pod::Coverage: 0
 distribution_type: module
@@ -17,4 +17,6 @@ no_index:
   directory: 
     - inc
     - t
-version: 0.03
+requires: 
+  perl: 5.6.0
+version: 0.05
